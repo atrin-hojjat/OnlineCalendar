@@ -1,0 +1,82 @@
+div.popups {
+	height: 100%;
+	width: 20%;
+	right: 0px;
+	bottom: 0px;
+}
+
+.popuph2.popupWarning, .popuph2.popupError, .popuph2.popupError, .popuph2.popupAlert {
+	font-size: 15px;
+	margin-left: 0.3em;
+}
+
+.popupp.popupWarning, .popupp.popupError, .popupp.popupError, .popupp.popupAlert {
+	font-size: 9px;
+	margin-left: 0.2em;
+}
+
+.popupdiv {
+	margin: 5px;
+
+	height: auto;
+	line-height: 0.5em;
+	background-color: var(--bgc, white);
+	border: 1px solid var(--bc, white);
+}
+
+.popupdiv.popupWarning {
+	--bgc: Gold;
+	--bc: GoldenRod;
+}
+.popupdiv.popupError {
+	--bgc: Crimson;
+	--bc: FireBrick;
+}
+.popupdiv.popupSuccess {
+	--bgc: MediumSpringGreen;
+	--bc: MediumSeaGreen;
+}
+.popupdiv.popupAlert {
+	--bgc: DeepSkyBlue;
+	--bc: DodgerBlue;
+}
+
+.popupbutton {
+	width: 2em;
+	height: 2em;
+	text-align: center;
+	margin: 5px;
+	border-radius: 0px 0px;
+	background-color: var(--bgc, white);
+	/* border-color: var(--bc, black); */
+	border: 3px solid var(--bc, white);
+	color: var(--c, black);
+}
+
+.popupbutton:hover {
+	border-radius: 0px 0px;
+	background-color: var(--bgc, white);
+	border-color: var(--bc, black);
+	color: var(--c, black);
+}
+
+.popupbutton.popupWarning {
+	--bgc: Gold;
+	--bc: GoldenRod;
+	--c: GoldenRod;
+}
+.popupbutton.popupError {
+	--bgc: Crimson;
+	--bc: FireBrick;
+	--c: FireBrick;
+}
+.popupbutton.popupSuccess {
+	--bgc: MediumSpringGreen;
+	--bc: MediumSeaGreen;
+	--c: MediumSeaGreen;
+}
+.popupbutton.popupAlert {
+	--bgc: DeepSkyBlue;
+	--bc: DodgerBlue;
+	--c: DodgerBlue;
+}
