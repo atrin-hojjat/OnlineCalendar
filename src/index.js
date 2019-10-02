@@ -3,20 +3,28 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // import App from './App.jsx';
 import Login from './LoginPage/Login.jsx';
+import {DBmanager} from './Database/database.js';
 import * as serviceWorker from './serviceWorker';
 
-function isLogedIn() {
-	return false;
-}
-
 class Main extends React.Component {
+	constructor() {
+		super();
+		this.state = {loged: false, key: {}};
+		this.checkLogin = this.checkLogin.bind(this);
+	}
+
+	checkLogin(key) {
+		let st = this.state;
+		st.loged = true; st.key = key;
+		this.setState(st);
+	}
 
   	render() {
-    	if(isLogedIn()) {
-			return <h1> test </h1>//<App />
-		} else {
-			return <Login />
-		}
+		let logedin = this.state.loged;
+		if(logedin)
+			return (<h1> you loged in</h1>)
+		else return <Login handler={this.checkLogin}/>
+		//return (this.state.loged ? <h1> test </h1> : <Login handler={this.checkLogin()} />);
   	}
 }
 

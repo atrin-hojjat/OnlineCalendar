@@ -4,14 +4,14 @@ import "./Popup.css"
 
 class Popup extends React.Component {
 	render() {
-		return (<div className={"popupdiv " + this.props.info.type}>
+		return (<div className={"popupdiv popup" + this.props.info.type}>
 			<div>
-			<h2 className={"popuph2 " + this.props.info.type}>
-			<button  className={"popupbutton " + this.props.info.type} onClick={this.props.remove}> x </button>
+			<h2 className={"popuph2 popup" + this.props.info.type}>
+			<button  className={"popupbutton popup" + this.props.info.type} onClick={this.props.remove}> x </button>
 			{this.props.info.title}
 			</h2>
 			</div>
-			<div><p className={"popupp " + this.props.info.type}> {this.props.info.message} </p></div>
+			<div><p className={"popup popup" + this.props.info.type}> {this.props.info.message} </p></div>
 		</div>
 		)
 	}

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import ReactDOM from 'react-dom';
 import {DBmanager} from '../Database/database.js';
 import {Popup} from './Elements/PopupNotification/PopupList.jsx';
 import './Login.css';
 
 // class LoginForm extends React.Component {
-const LoginForm = () => {
+function LoginForm(props) {
 	const [username, setusername] = useState("");
 	const [psw, setpsw] = useState("");
 	const defaultMsg = {type: "NONE", title:"NONE", msg:"NONE"};
@@ -28,10 +28,21 @@ const LoginForm = () => {
 	}
 
 	const login = e => {
-		if(DBmanager.login(username, psw)) {
-		} else {
-			changeMsg({type: "popupError", title: "Login Failed", message:"Incorrect Username or Password"});
-		}
+		let bdy = "username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(psw);
+		return fetch('http://localhost:3131/usr/login',{
+			method: 'POST',
+  			headers: {
+    			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  			},
+			body: bdy
+			}).then(res_ => {
+
+				console.log(res_.json());
+				props.handler();
+			}, err => {
+				console.log(err.stack);
+				changeMsg({type: "ERROR", title: "Connection Error", msg: "Please try again later, or call the admin"})
+			});
 	}
 
 
@@ -49,44 +60,105 @@ const LoginForm = () => {
 }
 
 //class SignupForm extends React.Component {
-const SignupForm = () => {
+const SignupForm = (props) => {
+	//TODO a total redo is probably necessary
+
 	const [username, setusername] = useState("");
 	const [psw, setpsw] = useState("");
 	const [rpsw, setrpsw] = useState("");
 	const [email, setemail] = useState("");
 	const [ok, updstat] = useState(false);
+	const [okT,updc] = useState({usr: false, psw: false, rpsw:false, em: false});
+	const defaultMsg = {type: "NONE", title:"NONE", msg:"NONE"};
+	const [msgUSR, setmsgUSR] = useState(defaultMsg);
+	const [msgRPSW, setmsgRPSW] = useState(defaultMsg);
+	const [msgEM, setmsgEM] = useState(defaultMsg);
 
+	const clearMsgUSR = e => {
+		setmsgUSR(defaultMsg);
+	}
+	const clearMsgRPSW = e => {
+		setmsgRPSW(defaultMsg);
+	}
+	const clearMsgEM = e => {
+		setmsgEM(defaultMsg);
+	}
 
+	const checkOK = e => {
+		console.log(okT);
+		if(okT.usr && okT.psw && okT.rpsw && okT.em)
+			updstat(true);
+	}
 
 	const handleUsr = e => {
+		if(!/([A-Z]?[a-z]?[0-9]?)*/g.test(e.target.value)) {
+			setmsgUSR({type: "ERROR", title: "Your username can only consist of numbers and letters", msg: ""})
+			updstat(false);
+		} else {updc({usr : true}); clearMsgUSR(); }
 		setusername(e.target.value);
+		checkOK();
 		// checkstat();
-		if(e.target.value === "hello") updstat(true);
-		else updstat(false);
 		// console.log("" + e.target.value + " " + ok);
 	}
 
 	const handlePsw = e => {
+		if(e.target.value != "") updc({psw : false});
+		else updc({psw : true})
+		checkOK();
 		setpsw(e.target.value);
 	}
 	const handleEmail = e => {
+		if(!/(\w|\d)+@(\w|\d)+.(\w)+/g.test(e.target.value)) {
+			setmsgEM({type: "ERROR", title: "Please Enter a valid Email address", msg: ""})
+			updstat(false);
+			updc({em : false})
+		} else { updc({em : true});clearMsgEM() }
+		checkOK();
 		setemail(e.target.value);
 	}
 
 	const handleRPsw = e => {
+		if(e.target.value != psw) {
+			setmsgRPSW({type: "ERROR", title: "Your Passwords do not match", msg: ""})
+			updstat(false);
+			updc({rpsw : false})
+		} else {updc({rpsw : true});clearMsgRPSW(); }
+		checkOK();
 		setrpsw(e.target.value);
 	}
 
 	const signup = e => {
+		let bdy = "username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(psw)
+				+ "&email=" + encodeURIComponent(email);
+		return fetch('http://localhost:3131/usr/singup',{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+			},
+			body: bdy
+			}).then(res_ => {
 
+				let res = res_.json();
+				if(res.status == 200) {
+					props.handler(res.tok_attr);
+				} else {
+					setmsgUSR({type: "ERROR", title: "Error", msg: res.message});
+				}
+			}, err => {
+				console.log(err.stack);
+				setmsgUSR({type: "ERROR", title: "Connection Error", msg: "Please try again later, or call the admin"})
+			});
 	}
 	// render() {
 		return (
 			<div className="form" id="signup">
 				<h1>Sign up</h1>
+				{msgUSR.type === "NONE" ? null : <Popup remove={clearMsgUSR} info={msgUSR}/>}
 				<input type="text" value={username} onChange={handleUsr} placeholder="Username" />
 				<input type="password" value={psw} onChange={handlePsw} placeholder="password" />
+				{msgRPSW.type === "NONE" ? null : <Popup remove={clearMsgRPSW} info={msgRPSW}/>}
 				<input type="password" value={rpsw} onChange={handleRPsw} placeholder="password" />
+				{msgEM.type === "NONE" ? null : <Popup remove={clearMsgEM} info={msgEM}/>}
 				<input type="text" value={email} onChange={handleEmail} placeholder="example@test.foo" />
 				<button onClick={() => signup()} disabled={!ok}>Sign up</button>
 			</div>
@@ -98,11 +170,15 @@ const SignupForm = () => {
 
 class Login extends React.Component {
 
+	constructor(props) {
+		super(props);
+	}
+
 	render() {
 		return (
 			<div className="platform">
-			<LoginForm/>
-			<SignupForm/>
+			<LoginForm {...this.props}/>
+			<SignupForm {...this.props}/>
 			</div>
 		);
 	}
