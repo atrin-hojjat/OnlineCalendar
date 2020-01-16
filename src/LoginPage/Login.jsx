@@ -35,12 +35,12 @@ function LoginForm(props) {
     			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
   			},
 			body: bdy
-			}).then(res_ => {
+		}).then(async res_ => {
 
-				console.log(res_.json());
-				props.handler();
+				let key = (await res_.json()).auth_token;
+				props.handler(key);
 			}, err => {
-				console.log(err.stack);
+				console.log(err);
 				changeMsg({type: "ERROR", title: "Connection Error", msg: "Please try again later, or call the admin"})
 			});
 	}
@@ -104,8 +104,8 @@ const SignupForm = (props) => {
 	const handlePsw = e => {
 		if(e.target.value != "") updc({psw : false});
 		else updc({psw : true})
-		checkOK();
 		setpsw(e.target.value);
+		checkOK();
 	}
 	const handleEmail = e => {
 		if(!/(\w|\d)+@(\w|\d)+.(\w)+/g.test(e.target.value)) {
@@ -113,8 +113,8 @@ const SignupForm = (props) => {
 			updstat(false);
 			updc({em : false})
 		} else { updc({em : true});clearMsgEM() }
-		checkOK();
 		setemail(e.target.value);
+		checkOK();
 	}
 
 	const handleRPsw = e => {
@@ -123,8 +123,8 @@ const SignupForm = (props) => {
 			updstat(false);
 			updc({rpsw : false})
 		} else {updc({rpsw : true});clearMsgRPSW(); }
-		checkOK();
 		setrpsw(e.target.value);
+		checkOK();
 	}
 
 	const signup = e => {
@@ -136,16 +136,17 @@ const SignupForm = (props) => {
 				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 			},
 			body: bdy
-			}).then(res_ => {
+		}).then(async res_ => {
 
-				let res = res_.json();
+				let res = await res_.json();
+				console.log(res);
 				if(res.status == 200) {
-					props.handler(res.tok_attr);
+					props.handler(res.auth_token);
 				} else {
 					setmsgUSR({type: "ERROR", title: "Error", msg: res.message});
 				}
 			}, err => {
-				console.log(err.stack);
+				console.log(err);
 				setmsgUSR({type: "ERROR", title: "Connection Error", msg: "Please try again later, or call the admin"})
 			});
 	}

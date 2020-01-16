@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Calendar from './Calendar/Calendar.jsx'
 import './index.css';
 // import App from './App.jsx';
 import Login from './LoginPage/Login.jsx';
@@ -21,9 +22,10 @@ class Main extends React.Component {
 
   	render() {
 		let logedin = this.state.loged;
-		if(logedin)
-			return (<h1> you loged in</h1>)
-		else return <Login handler={this.checkLogin}/>
+		if(logedin) {
+			console.log(this.state.key);
+			return <Calendar auth_token={this.state.key}/>
+		} else return <Login handler={this.checkLogin}/>
 		//return (this.state.loged ? <h1> test </h1> : <Login handler={this.checkLogin()} />);
   	}
 }
